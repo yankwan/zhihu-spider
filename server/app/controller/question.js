@@ -2,8 +2,10 @@ const service = require('../service/question')
 const spider = require('../service/spider')
 const App = require('./app')
 const getQidByUrl = (url) => {
+  console.log('url: ', url)
   try {
     const reg = /www.zhihu.com\/question\/(\d*)/
+    console.log(url.match(reg))
     return url.match(reg)[1]
   } catch (err) {
     return false
@@ -21,6 +23,7 @@ class Question extends App {
   }
   async create (ctx) {
     let { qid, url } = ctx.request.body
+    console.log(`qid : ${qid}, url: ${url}`)
     if (!qid && !url) {
       super.error('别瞎填')
       return
