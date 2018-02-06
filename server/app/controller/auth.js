@@ -28,6 +28,7 @@ class Auth extends App {
         let rs = await authService.login(params, ctx.header.cookie)
         console.log(`login result : ${JSON.stringify(rs)}`);
         if (rs.success && !rs.auth) {
+            // 获取用户信息并保存至数据库
             rs.auth = await authService.upsertAuth(params, rs.headers)
         }
         super.result(rs)
@@ -54,6 +55,16 @@ class Auth extends App {
             super.handleHeaders(res.headers)
             ctx.body = body
         })
+    }
+
+    // 登出
+    async logout(ctx) {
+        console.log('logout....');
+        // ctx.session = null;
+        super.deleteCookie()
+        ctx.body = {
+            success: true
+        }
     }
 }
 module.exports = new Auth()

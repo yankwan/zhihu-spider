@@ -74,6 +74,7 @@ module.exports = {
     },
     async upsertAuth(params, headers) {
         const cookieData = this.buildCookie(headers['set-cookie'])
+        // 通过cookie获取用户信息
         const userInfo = await spider.getUserInfo(cookieData.data)
         if (!userInfo.success || !userInfo.data.uid) {
             return false
@@ -88,10 +89,12 @@ module.exports = {
         })
         if (params.phone_num) newAuth.phone_num = params.phone_num
         if (params.email) newAuth.email = params.email
+
+        // 更新数据库用户信息， 没有的话就创建它
         const rs = await AuthModel.findOneAndUpdate(cond, newAuth, {
-            upsert: true,
+            upsert: true, //  creates the object if it doesn't exist
             setDefaultsOnInsert: true,
-            new: true
+            new: true // return the modified document rather than the original
         })
         return rs
     },
@@ -104,6 +107,7 @@ module.exports = {
 
     // 判断是否已经登录
     async isLogined(params) {
+        // 查询条件 { phone: 'xxxxx' } 或 { email: 'xxxxx' }
         const rs = await AuthModel.findOne(this.getCondByParams(params))
         if (rs && rs.expiredTime > new Date()) {
             return {
@@ -126,7 +130,7 @@ module.exports = {
         const url = params.email ? 'email' : 'phone_num'
         const options = {
             url: `${zhihuRoot}/login/${url}`,
-            form: params,
+            form: params, // 表单请求的表单项数据
             headers: {
                 'Origin': zhihuRoot,
                 'Host': 'www.zhihu.com',
@@ -136,6 +140,8 @@ module.exports = {
             }
         }
         let res
+
+        // rs: {r: 0, msg: "登录成功"}
         let rs = await request.post(options).on('response', function (response) {
             res = response
         }).catch(err => {
@@ -167,6 +173,7 @@ module.exports = {
                 msg: rs.msg
             }
         }
+
         return {
             headers: res.headers,
             success: true,

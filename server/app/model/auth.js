@@ -23,6 +23,9 @@ const Auth = new mongoose.Schema({
     unique: true,
     sparse: true
   },
+  avatar: {
+    type: String
+  },
   cookie: {
     type: String
   },

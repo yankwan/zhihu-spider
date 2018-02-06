@@ -10,6 +10,7 @@ class App {
     }
     deleteCookie() {
         if (!this.ctx.header.cookie) return
+        console.log('delete cookie...');
         this.ctx.header.cookie.split('; ').forEach(cookie => {
             const name = cookie.split('=')[0]
             this.ctx.cookies.set(name, null)

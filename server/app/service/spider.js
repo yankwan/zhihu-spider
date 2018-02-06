@@ -4,6 +4,7 @@ const querystring = require('querystring')
 const cheerio = require('cheerio')
 const config = require('../config')
 const zhihuRoot = config.zhihu.root
+const fs = require('fs')
 const getQidByUrl = (url) => {
     try {
         const reg = /question\/(\d*)/
@@ -15,6 +16,7 @@ const getQidByUrl = (url) => {
 module.exports = {
     request(options) {
         return request(options).catch(err => {
+            console.log("request has a error");
             return err
         })
     },
@@ -154,10 +156,13 @@ module.exports = {
                 'Cookie': cookie
             }
         }
+        // Get 请求获取html网页
+        // 从获取的网页rs中获取需要的数据
         const rs = await this.request(options)
         if (rs.error) {
             return this.failRequest(rs)
         }
+        console.log(rs);
         const $ = cheerio.load(rs)
         const judge = this.judgeLoad($)
         if (!judge.success) {
@@ -165,12 +170,14 @@ module.exports = {
         }
         const data = $('#data').data('state')
         const userInfo = data.entities.users[data.currentUser]
+        console.log(userInfo.avatarUrl)
         return {
             success: true,
             data: {
                 urlToken: data.currentUser,
                 name: userInfo.name,
-                uid: userInfo.uid
+                uid: userInfo.uid,
+                avatar: userInfo.avatarUrl
             }
         }
     },
@@ -308,16 +315,20 @@ module.exports = {
         })
         return Promise.all(data)
     },
+
+    // 爬取网页
     async getData(cookie, qid) {
         const options = {
             url: `${zhihuRoot}/question/${qid}`,
             method: 'GET',
             headers: {
                 'Cookie': cookie,
-                'Accept-Encoding': 'deflate, sdch, br' // 不允许gzip,开启gzip会开启知乎客户端渲染，导致无法爬取
+                'Accept-Encoding': 'deflate, sdch, br', // 不允许gzip,开启gzip会开启知乎客户端渲染，导致无法爬取
+                'Accept-Language': 'zh-CN,zh;q=0.9'
             }
         }
-        const rs = await this.request(options)
+        const rs = await this.request(`${zhihuRoot}/question/${qid}`)
+        fs.writeFileSync('input.txt', rs)
         if (rs.error) {
             return this.failRequest(rs)
         }
@@ -326,19 +337,23 @@ module.exports = {
         if (!judge.success) {
             return judge
         }
-        const NumberBoard = $('.NumberBoard-item .NumberBoard-value')
+        const NumberBoard = $('.NumberBoard-item .NumberBoard-itemValue')
         const $title = $('.QuestionHeader-title')
+
         $title.find('button').remove()
-        return {
+
+
+        const result = {
             success: true,
             title: $title.text(),
             data: {
                 qid: qid,
-                followers: Number($(NumberBoard[0]).text()),
-                readers: Number($(NumberBoard[1]).text()),
+                followers: Number($(NumberBoard[0]).text().replace(/,/g, '')),
+                readers: Number($(NumberBoard[1]).text().replace(/,/g, '')),
                 answers: Number($('h4.List-headerText span').text().replace(' 个回答', ''))
             }
         }
+        return result;
     },
     async explore(cookie, offset = 0, type = 'day') {
         const params = JSON.stringify({
@@ -352,6 +367,7 @@ module.exports = {
             method: 'GET',
             url: `${zhihuRoot}/node/ExploreAnswerListV2?params=${params}`
         }
+
         const rs = await this.request(options)
         if (rs.error) {
             return this.failRequest(rs)
@@ -380,7 +396,8 @@ module.exports = {
                 aid: $el.find('.zm-item-answer').data('atoken'),
                 answer: answer,
                 voters: $el.find('.js-voteCount').text(),
-                comments: $el.find('.js-toggleCommentBox').text().replace(' 条评论', '')
+                comments: $el.find('.js-toggleCommentBox').text().replace(' 条评论', ''),
+                url: titleEl.attr('href')
             })
         })
         return {

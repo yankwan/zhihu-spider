@@ -18,6 +18,7 @@ const routerMap = [
   ['get', '/api/auth/update', auth, 'updateInfo'],
   ['post', '/api/auth/login', auth, 'login'],
   ['get', '/api/auth/get', auth, 'get'],
+  ['del', '/api/auth/logout', auth, 'logout'],
 
   ['post', '/api/question', question, 'create'],
   ['get', '/api/question', question, 'get'],
