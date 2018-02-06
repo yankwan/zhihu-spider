@@ -6,9 +6,9 @@
       <a :href="quetsionUrl" @click.stop="() => {}">{{question.title}}</a>
     </div>
     <div class="overview">
-      <span class="star"><mu-icon :size="16" value="star"/><i>{{question.data.followers}}</i></span>
+      <!--<span class="star"><mu-icon :size="16" value="star"/><i>{{question.data.followers}}</i></span>
       <span class="answer"><mu-icon :size="16" value="question_answer"/><i>{{question.data.answers}}</i></span>
-      <span class="reader"><mu-icon :size="16" value="remove_red_eye"/><i>{{question.data.readers}}</i></span>
+      <span class="reader"><mu-icon :size="16" value="remove_red_eye"/><i>{{question.data.readers}}</i></span>-->
     </div>
     <div class="control" slot="right">
       <mu-raised-button label="取消"

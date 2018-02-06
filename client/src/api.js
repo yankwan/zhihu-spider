@@ -49,7 +49,10 @@ export default {
     return instance.get(url.question, {params: query})
   },
   addQuestion (question) {
-    return instance.post(url.question, question)
+    let result = instance.post(url.question, question)
+    console.log(result)
+    return result
+    // return instance.post(url.question, question)
   },
   questionData (qid) {
     return instance.get(`${url.qData}/${qid}`)
@@ -85,6 +88,9 @@ export default {
     return instance.post(`${url.auth}/login`, params, {
       withCredentials: true
     })
+  },
+  logout (params) {
+    return instance.delete(`${url.auth}/logout`)
   },
   quickSearch (token) {
     return instance.get(`${url.question}/quick-search`, {

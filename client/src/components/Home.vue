@@ -69,11 +69,13 @@ export default {
       this.questions.splice(0, 0, question)
     },
     getQuestion () {
+      console.log('loadToken ', this.loadToken)
       if (this.loadToken) return
       this.loadToken = true
       this.$api.questionList(this.query).then(rs => {
         this.loadToken = false
         this.questions = this.questions.concat(rs.data.data)
+        console.log(this.questions)
         if (rs.data.data.length < this.query.size) {
           this.noMore = true
         } else {
@@ -94,6 +96,7 @@ export default {
     }
   },
   mounted () {
+    console.log('mounted....get question')
     this.scroller = document.querySelector('.app-content')
     this.getQuestion()
   }

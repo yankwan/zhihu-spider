@@ -9,7 +9,7 @@
         </mu-thead>
         <mu-tbody>
           <mu-tr v-for="(d, k) in rates" :key="k">
-            <mu-td v-for="(v, i) in d" :key="k">{{v}}</mu-td>
+            <mu-td v-for="(v, i) in d" :key="i">{{v}}</mu-td>
           </mu-tr>
         </mu-tbody>
       </mu-table>

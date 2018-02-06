@@ -8,6 +8,7 @@ import Login from '@/components/Login'
 import Topic from '@/components/Topic/Index'
 import TopicList from '@/components/Topic/List'
 import TopicContent from '@/components/Topic/Content'
+import Setting from '@/components/Setting'
 
 Vue.use(Router)
 
@@ -51,6 +52,11 @@ export default new Router({
       path: '/data/:qid',
       name: 'Data',
       component: Data
+    },
+    {
+      path: '/setting',
+      name: 'Setting',
+      component: Setting
     }
   ]
 })
