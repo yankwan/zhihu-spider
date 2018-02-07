@@ -2,8 +2,9 @@ const spiderService = require('./spider')
 const QuestionModel = require('../model/question')
 const HotQuestionModel = require('../model/hot_question')
 const dataService = require('../service/data')
-
+const LOGGING = true;
 module.exports = {
+	// 获取问题列表
 	async get(page, size, cond = {}) {
 		cond.isDeleted = cond.isDeleted | false
 		const qs = await QuestionModel
@@ -13,6 +14,7 @@ module.exports = {
 			.limit(size)
 			.lean()
 			.exec()
+		if (LOGGING) console.log(qs);
 		const qids = qs.map(q => q.qid)
 		console.log(qids);
 		const data = await dataService.getGroupData(qids)
@@ -25,6 +27,9 @@ module.exports = {
 		})
 		return qs
 	},
+
+	// 根据qid爬取对应question信息
+	// 并存储在数据库
 	async add(authInfo, qid) {
 		const rs = await spiderService.getData(authInfo.cookie, qid)
 		if (!rs.success) {
@@ -43,12 +48,19 @@ module.exports = {
 			userId: authInfo._id,
 			title: title
 		}
-		const q = new QuestionModel(question)
+		
+		// 存储对应question的关注数，回答数，阅读数
+		// data = {qid:..., readers:..., flowers:..., }
+		// Data Model
 		const d = await dataService.create(data)
+		// 每个document都是model的实例
+		// 新增一条记录需要new一个model
+		const q = new QuestionModel(question)
 		try {
-			const que = (await q.save()).toObject()
+			const que = (await q.save()).toObject()  // 插入的数据
 			const qData = await d.save()
 			que.data = qData
+			// 返回数据
 			return {
 				success: true,
 				question: que
@@ -70,6 +82,8 @@ module.exports = {
 			updateTime: new Date()
 		})
 	},
+
+	// 跟踪
 	async reActive(qid, userId) {
 		return QuestionModel.findOne({
 			qid: qid,

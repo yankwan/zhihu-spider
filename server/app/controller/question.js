@@ -22,6 +22,7 @@ class Question extends App {
     }
     async create(ctx) {
         console.log("question create...");
+        // 传入question对象
         let { qid, url } = ctx.request.body
         if (!qid && !url) {
             super.error('别瞎填')
@@ -35,11 +36,14 @@ class Question extends App {
         let result = await service.add(ctx.authInfo, qid);
         super.result(result)
     }
+    // 获取问题列表
     async get(ctx) {
         console.log("question get....")
         let { page = 1, size = 10, status = 1 } = ctx.request.query
         page = Number(page)
         size = Number(size)
+
+        // 选择条件
         const cond = {
             userId: ctx.header.authorization,
             status: Number(status)
