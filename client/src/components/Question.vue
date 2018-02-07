@@ -1,8 +1,9 @@
 <template>
   <mu-list-item :disableRipple="true"
                 class="question"
-                @click.native="showData(question)">
+                @click="showData(question)">
     <div class="mu-item-title" slot="title">
+      <!-- 点击url的时候阻止冒泡进入showData事件 -->
       <a :href="quetsionUrl" @click.stop="() => {}">{{question.title}}</a>
     </div>
     <div class="overview">

@@ -50,7 +50,6 @@ export default {
   },
   addQuestion (question) {
     let result = instance.post(url.question, question)
-    console.log(result)
     return result
     // return instance.post(url.question, question)
   },

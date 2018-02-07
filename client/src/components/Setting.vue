@@ -56,6 +56,7 @@ export default {
         if (type === 1) {
             this.$api.logout().then((res) => {
                 console.log(res)
+                window.localStorage.removeItem('anserAuth');
                 // 退出跳转到首页
                 this.$router.push({
                     path: '/login'
@@ -98,7 +99,6 @@ export default {
     }
     .logout {
       height: 40px;
-      line-height: 40px;
       margin-top: 18px;
       background-color: #fff;
       font-size: 2rem;

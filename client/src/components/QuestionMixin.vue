@@ -11,7 +11,6 @@ export default {
     addQuestion (q, e) {
       e.stopPropagation()
       this.$api.addQuestion(q).then(rs => {
-        console.log(rs)
         q.status = 1
       }).catch(err => {
         console.log(err)
@@ -19,7 +18,6 @@ export default {
     },
     reCrawling (q, e) {
       console.log('跟踪...')
-      console.log(q)
       if (!q._id) return this.addQuestion(q, e)
       e.stopPropagation()
       this.$api.reCrawling(q.qid).then(rs => {

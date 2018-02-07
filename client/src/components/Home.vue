@@ -98,6 +98,7 @@ export default {
   mounted () {
     console.log('mounted....get question')
     this.scroller = document.querySelector('.app-content')
+    // 获取跟踪的数据
     this.getQuestion()
   }
 }

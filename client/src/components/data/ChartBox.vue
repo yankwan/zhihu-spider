@@ -21,7 +21,7 @@ export default {
         followers: '255,167,38' // 橙色
       },
       labels: [], // 时间横坐标
-      dimension: ['readers', 'answers', 'followers'],
+      dimension: ['readers', 'answers', 'followers'], // 三个维度
       chartsName: ['number', 'increment', 'rate'],
       chartData: {}
     }
@@ -68,9 +68,10 @@ export default {
     buildData () {
       const material = this.data
       material.forEach((d, k) => {
-        this.labels.push(d.createTime)
+        this.labels.push(d.createTime) // 时间横坐标
         this.dimension.forEach(f => {
-          this.chartData.number[f].push(d[f])
+          // 构建每个维度下的数据
+          this.chartData.number[f].push(d[f]) // number chart 数量统计表
           if (k === this.dataLength) {
             this.chartData.increment[f].push(0)
             this.chartData.rate[f].push(0)
@@ -89,12 +90,15 @@ export default {
         })
       })
     },
+
+    // 渲染图表
     render (datasets, name) {
       const ctx = document.getElementById(`chart-${name}`)
       const data = {
         labels: this.labels,
         datasets: datasets
       }
+      console.log(JSON.stringify(data));
       new Chart(ctx, {
         type: 'line',
         data: data,
